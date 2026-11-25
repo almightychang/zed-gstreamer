@@ -80,8 +80,9 @@ struct Harness {
     void data_eos() { gst_pad_send_event(mux->sinkpad_data, gst_event_new_eos()); }
 };
 
-// Documented pipeline: data comes straight from zedsrc, video goes through a queue first,
-// so the data branch is usually one frame ahead.
+// README pipeline: zeddemux pushes src_data before src_left, and data goes straight to the mux
+// while video goes through a queue. Data always arrives first; it is a whole frame ahead
+// whenever the video branch takes longer than one frame period.
 static void test_video_one_frame_behind_is_muxed() {
     Harness h;
     h.data(1);
@@ -109,6 +110,7 @@ static void test_eos_on_data_waits_for_video() {
 
 // Stop and play again: timestamps restart from the beginning. In the first run each pad was
 // the first to arrive at least once (100: video first, 101: data first).
+// This needs either pad to be able to arrive first, e.g. both branches queued as in .ci/test.sh.
 static void test_restart_resets_matching() {
     Harness h;
     h.video(100);

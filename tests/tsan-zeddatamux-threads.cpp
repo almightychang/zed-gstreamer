@@ -1,6 +1,7 @@
 // Drives zeddatamux from two streaming threads, as in the README pipeline where src_data is
-// linked directly and src_left goes through a queue. Build with -fsanitize=thread to see the
-// race on the shared matching state.
+// linked directly and src_left goes through a queue: video frame k enters after data frame k,
+// and data frame k+1 arrives while video frame k is being muxed. Build with -fsanitize=thread
+// and run under `setarch $(uname -m) -R` to see the race on the shared matching state.
 #define PACKAGE "regression-test"
 #define GST_PACKAGE_VERSION "test"
 #define GST_PACKAGE_LICENSE "LGPL"
